@@ -19,6 +19,7 @@ class CheckoutController extends Controller
             'shipping_address' => 'required|string',
             'email' => 'required|email',
             'name' => 'required|string',
+            'promo_code' => 'nullable|string',
         ]);
 
         try {
@@ -49,10 +50,23 @@ class CheckoutController extends Controller
                 $product->decrement('stock_quantity', $quantity);
             }
 
+            // Handle Promo Code Discount
+            $discountAmount = 0;
+            if ($request->filled('promo_code')) {
+                $promo = \App\Models\PromoCode::where('code', strtoupper($request->promo_code))
+                                              ->where('is_active', true)
+                                              ->first();
+                if ($promo) {
+                    $discountAmount = ($totalAmount * $promo->discount_percentage) / 100;
+                    $totalAmount -= $discountAmount;
+                }
+            }
+
             // Create Order
             $order = Order::create([
                 'user_id' => $request->user()->id,
                 'total_amount' => $totalAmount,
+                'discount_amount' => $discountAmount,
                 'status' => 'pending',
                 'shipping_address' => $request->shipping_address . "\n" . $request->name . "\n" . $request->email,
             ]);

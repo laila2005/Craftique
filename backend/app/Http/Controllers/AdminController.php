@@ -18,6 +18,37 @@ class AdminController extends Controller
 
         $recentOrders = Order::with('items.product')->orderBy('created_at', 'desc')->take(5)->get();
 
+        // Calculate sales over the last 7 days
+        $ordersLast7Days = Order::where('created_at', '>=', now()->subDays(6)->startOfDay())->get();
+        $salesData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $salesData[$date] = 0;
+        }
+
+        foreach ($ordersLast7Days as $order) {
+            $date = $order->created_at->format('Y-m-d');
+            if (isset($salesData[$date])) {
+                $salesData[$date] += $order->total_amount;
+            }
+        }
+
+        $formattedSalesData = [];
+        foreach ($salesData as $date => $total) {
+            $formattedSalesData[] = [
+                'date' => date('M d', strtotime($date)),
+                'revenue' => $total
+            ];
+        }
+
+        $orderStatusData = [
+            ['name' => 'Pending', 'value' => Order::where('status', 'pending')->count()],
+            ['name' => 'Processing', 'value' => Order::where('status', 'processing')->count()],
+            ['name' => 'Shipped', 'value' => Order::where('status', 'shipped')->count()],
+            ['name' => 'Delivered', 'value' => Order::where('status', 'delivered')->count()],
+            ['name' => 'Cancelled', 'value' => Order::where('status', 'cancelled')->count()],
+        ];
+
         return response()->json([
             'overview' => [
                 'total_sales' => $totalSales,
@@ -25,7 +56,9 @@ class AdminController extends Controller
                 'total_products' => $totalProducts,
                 'total_sellers' => $totalSellers,
             ],
-            'recent_orders' => $recentOrders
+            'recent_orders' => $recentOrders,
+            'sales_data' => $formattedSalesData,
+            'order_status_data' => $orderStatusData
         ]);
     }
 
@@ -47,6 +80,28 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'Order status updated successfully',
             'order' => $order
+        ]);
+    }
+
+    public function pendingProducts()
+    {
+        $products = Product::with('seller')->where('status', 'pending')->orderBy('created_at', 'desc')->get();
+        return response()->json($products);
+    }
+
+    public function updateProductStatus(Request $request, string $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:approved,rejected'
+        ]);
+
+        $product = Product::findOrFail($id);
+        $product->status = $request->status;
+        $product->save();
+
+        return response()->json([
+            'message' => "Product {$request->status} successfully",
+            'product' => $product
         ]);
     }
 }

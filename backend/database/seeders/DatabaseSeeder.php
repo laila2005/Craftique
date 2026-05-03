@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
+        $this->call([
+            PromoCodeSeeder::class,
+        ]);
+
         // Admin User
         Admin::create([
             'name' => 'Laila Admin',
@@ -309,6 +313,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($realProducts as $product) {
+            $product['status'] = 'approved';
             Product::create($product);
         }
 

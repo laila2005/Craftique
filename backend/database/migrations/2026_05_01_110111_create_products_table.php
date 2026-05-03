@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->integer('stock_quantity')->default(0);
             $table->string('image_url')->nullable();
+            $table->string('status')->default('pending'); // pending, approved, rejected
             $table->boolean('is_archived')->default(false);
             $table->softDeletes();
             $table->timestamps();

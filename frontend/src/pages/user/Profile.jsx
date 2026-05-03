@@ -1,15 +1,36 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { ShoppingBag, Heart, User as UserIcon, Package, AlertCircle } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState('orders');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.tab || 'orders');
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { user, token, isAuthenticated } = useContext(AuthContext);
+  const [error, setError] = useState(null);
+  const { user, token, isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.tab) {
+      setActiveTab(location.state.tab);
+    }
+  }, [location.state]);
+
+  const removeFavorite = (productId) => {
+    axios.post(`http://127.0.0.1:8000/api/products/${productId}/favorite`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        setProfileData({
+          ...profileData,
+          favorites: profileData.favorites.filter(fav => fav.product_id !== productId)
+        });
+      })
+      .catch(err => console.error('Error removing favorite:', err));
+  };
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -26,14 +47,42 @@ const Profile = () => {
       })
       .catch(err => {
         console.error('Error fetching profile', err);
+        if (err.response && err.response.status === 401) {
+          logout();
+          navigate('/login');
+          return;
+        }
+        const serverError = err.response?.data?.message || err.message;
+        setError(`Failed to load profile data: ${serverError}`);
         setLoading(false);
       });
-  }, [isAuthenticated, token, navigate]);
+  }, [isAuthenticated, token, navigate, logout]);
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64 w-full">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-craft-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-md shadow-sm">
+          <div className="flex items-center">
+            <AlertCircle className="h-6 w-6 text-red-500 mr-3" />
+            <h3 className="text-lg font-medium text-red-800">Oops! Something went wrong.</h3>
+          </div>
+          <div className="mt-3 text-sm text-red-700 ml-9">
+            <p>{error}</p>
+          </div>
+          <div className="mt-5 ml-9">
+            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-red-100 text-red-700 rounded-md text-sm font-medium hover:bg-red-200 transition">
+              Try Again
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -137,7 +186,14 @@ const Profile = () => {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {favorites.map(fav => (
-                    <div key={fav.id} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition">
+                    <div key={fav.id} className="relative border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition bg-white">
+                      <button 
+                        onClick={() => removeFavorite(fav.product_id)}
+                        className="absolute top-3 right-3 p-2 bg-white/90 hover:bg-white rounded-full text-red-500 hover:text-red-600 shadow-sm backdrop-blur-sm transition z-10"
+                        title="Remove from favorites"
+                      >
+                        <Heart className="h-5 w-5 fill-current" />
+                      </button>
                       <Link to={`/product/${fav.product_id}`} className="block h-48">
                         <img src={fav.product?.image_url} alt={fav.product?.name} className="w-full h-full object-cover" />
                       </Link>
