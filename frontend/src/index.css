@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-craft-50: #f9f6f0;
+  --color-craft-100: #f0eade;
+  --color-craft-200: #e1d4be;
+  --color-craft-300: #ceb896;
+  --color-craft-400: #bd9a6f;
+  --color-craft-500: #af8251;
+  --color-craft-600: #a37145;
+  --color-craft-700: #885b3b;
+  --color-craft-800: #6f4c34;
+  --color-craft-900: #5a3f2d;
+}
+
+@layer base {
+  body {
+    @apply bg-craft-50 text-craft-900 font-sans antialiased;
+  }
+}
