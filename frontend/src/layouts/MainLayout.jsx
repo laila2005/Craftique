@@ -10,6 +10,7 @@ const MainLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -53,13 +54,31 @@ const MainLayout = () => {
 
             <div className="flex items-center space-x-6">
               {isAuthenticated ? (
-                <div className="flex items-center space-x-4">
-                  <Link to="/profile" className="text-sm font-medium text-craft-600 hover:text-craft-800 transition hidden sm:flex items-center">
-                    <User className="h-4 w-4 mr-1" /> Hi, {user?.name}
-                  </Link>
-                  <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition" title="Log Out">
-                    <LogOut className="h-5 w-5" />
+                <div className="relative">
+                  <button 
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center space-x-1 text-sm font-medium text-craft-600 hover:text-craft-800 transition"
+                  >
+                    <User className="h-6 w-6 p-0.5 bg-craft-100 rounded-full" />
+                    <span className="hidden sm:inline-block">Hi, {user?.name}</span>
                   </button>
+                  
+                  {isProfileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-100">
+                      <div className="px-4 py-2 border-b border-gray-100 mb-1 sm:hidden">
+                        <p className="text-sm font-medium text-gray-900 truncate">{user?.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                      </div>
+                      <Link to="/profile" state={{ tab: 'orders' }} onClick={() => setIsProfileOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-craft-50 hover:text-craft-700">My Profile & Orders</Link>
+                      <Link to="/profile" state={{ tab: 'favorites' }} onClick={() => setIsProfileOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-craft-50 hover:text-craft-700">Saved Products</Link>
+                      <button 
+                        onClick={() => { setIsProfileOpen(false); handleLogout(); }}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 mt-1 border-t border-gray-100"
+                      >
+                        Log Out
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <Link to="/login" className="text-craft-600 hover:text-craft-800 transition flex items-center text-sm font-medium">

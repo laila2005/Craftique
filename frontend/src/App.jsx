@@ -14,8 +14,14 @@ import OrderSuccess from './pages/OrderSuccess';
 import Profile from './pages/user/Profile';
 import Dashboard from './pages/admin/Dashboard';
 import Orders from './pages/admin/Orders';
+import Products from './pages/admin/Products';
+import Customers from './pages/admin/Customers';
+import Settings from './pages/admin/Settings';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import SellerLogin from './pages/seller/Login';
+import SellerRegister from './pages/seller/Register';
+import SellerDashboard from './pages/seller/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -39,6 +45,15 @@ function App() {
         <Route path="success" element={<OrderSuccess />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+
+        {/* Seller Auth Routes */}
+        <Route path="seller/login" element={<SellerLogin />} />
+        <Route path="seller/register" element={<SellerRegister />} />
+        <Route path="seller/dashboard" element={
+          <PrivateRoute requireSeller={true}>
+            <SellerDashboard />
+          </PrivateRoute>
+        } />
       </Route>
 
       {/* Admin Panel Routes */}
@@ -49,9 +64,9 @@ function App() {
       }>
         <Route index element={<Dashboard />} />
         <Route path="orders" element={<Orders />} />
-        <Route path="products" element={<Dashboard />} />
-        <Route path="customers" element={<Dashboard />} />
-        <Route path="settings" element={<Dashboard />} />
+        <Route path="products" element={<Products />} />
+        <Route path="customers" element={<Customers />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );

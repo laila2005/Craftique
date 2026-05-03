@@ -17,6 +17,7 @@ class Product extends Model
         'price',
         'stock_quantity',
         'image_url',
+        'status',
         'is_archived'
     ];
 

@@ -90,13 +90,21 @@ const Login = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+        <div className="mt-8 pt-6 border-t border-gray-100 text-center space-y-4">
           <p className="text-gray-600 text-sm">
             Don't have an account?{' '}
             <Link to="/register" className="text-craft-600 font-semibold hover:text-craft-800 transition">
               Sign Up here
             </Link>
           </p>
+          <div className="bg-craft-50 rounded-lg p-4 mt-4">
+            <p className="text-craft-800 text-sm font-medium">
+              Are you an artisan?{' '}
+              <Link to="/seller/login" className="text-craft-600 font-bold hover:text-craft-800 underline transition">
+                Log in as a Seller
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
