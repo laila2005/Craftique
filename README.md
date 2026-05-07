@@ -19,8 +19,6 @@ A responsive Single Page Application (SPA) built with **React** and **Vite**.
 - **Axios:** Handles asynchronous HTTP requests to the Laravel API.
 - **Lucide React:** Supplies modern, lightweight SVG icons.
 
-### 3. Legacy Code (`/legacy`)
-All the original procedural PHP files (e.g., `index.php`, `Cart.php`, `login.php`) have been safely archived in the `legacy` folder. They are no longer executed but remain for reference if any old business logic needs to be migrated later.
 
 ## Database Schema Highlights
 - **Admins:** Superusers with full access to the platform.
