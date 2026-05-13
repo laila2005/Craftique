@@ -94,7 +94,7 @@ class SellerProductController extends Controller
             'product' => new \App\Http\Resources\ProductResource($product)
         ]);
     }
-
+// soft delete
     public function destroy(Request $request, string $id)
     {
         $seller = $request->user();

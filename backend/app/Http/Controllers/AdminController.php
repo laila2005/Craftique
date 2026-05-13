@@ -63,7 +63,7 @@ class AdminController extends Controller
     }
 
     public function orders()
-    {
+    {                                                            // pagnation only fetches 20 orders
         $orders = Order::with('items.product', 'items.seller')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json($orders);
     }
