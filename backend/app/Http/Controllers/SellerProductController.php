@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Gate;
 
 class SellerProductController extends Controller
 {
@@ -15,7 +16,8 @@ class SellerProductController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return response()->json($seller->products()->orderBy('created_at', 'desc')->get());
+        $products = $seller->products()->orderBy('created_at', 'desc')->get();
+        return \App\Http\Resources\ProductResource::collection($products);
     }
 
     public function store(Request $request)
@@ -57,7 +59,10 @@ class SellerProductController extends Controller
             'is_archived' => false
         ]);
 
-        return response()->json(['message' => 'Product submitted for approval', 'product' => $product], 201);
+        return response()->json([
+            'message' => 'Product submitted for approval', 
+            'product' => new \App\Http\Resources\ProductResource($product)
+        ], 201);
     }
 
     public function show(Request $request, string $id)
@@ -65,11 +70,9 @@ class SellerProductController extends Controller
         $seller = $request->user();
         $product = Product::with(['reviews.user'])->findOrFail($id);
 
-        if ($product->seller_id !== $seller->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        Gate::forUser($seller)->authorize('update', $product);
 
-        return response()->json($product);
+        return new \App\Http\Resources\ProductResource($product);
     }
 
     public function update(Request $request, string $id)
@@ -77,9 +80,7 @@ class SellerProductController extends Controller
         $seller = $request->user();
         $product = Product::findOrFail($id);
 
-        if ($product->seller_id !== $seller->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        Gate::forUser($seller)->authorize('update', $product);
 
         $request->validate([
             'stock_quantity' => 'required|integer|min:0',
@@ -88,7 +89,10 @@ class SellerProductController extends Controller
         $product->stock_quantity = $request->stock_quantity;
         $product->save();
 
-        return response()->json(['message' => 'Stock updated successfully', 'product' => $product]);
+        return response()->json([
+            'message' => 'Stock updated successfully', 
+            'product' => new \App\Http\Resources\ProductResource($product)
+        ]);
     }
 
     public function destroy(Request $request, string $id)
@@ -96,9 +100,7 @@ class SellerProductController extends Controller
         $seller = $request->user();
         $product = Product::findOrFail($id);
 
-        if ($product->seller_id !== $seller->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        Gate::forUser($seller)->authorize('delete', $product);
 
         $product->delete();
 

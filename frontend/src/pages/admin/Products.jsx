@@ -28,8 +28,8 @@ const Products = () => {
     setLoading(true);
     setProducts([]);
     const endpoint = activeTab === 'active' 
-      ? 'http://127.0.0.1:8000/api/products' 
-      : 'http://127.0.0.1:8000/api/admin/products/pending';
+      ? 'http://127.0.0.1:8000/api/v1/products' 
+      : 'http://127.0.0.1:8000/api/v1/admin/products/pending';
 
     axios.get(endpoint, {
       headers: { Authorization: `Bearer ${token}` }
@@ -60,7 +60,7 @@ const Products = () => {
     if (formData.image_url) submitData.append('image_url', formData.image_url);
     if (imageFile) submitData.append('image_file', imageFile);
 
-    axios.post('http://127.0.0.1:8000/api/admin/products', submitData, {
+    axios.post('http://127.0.0.1:8000/api/v1/admin/products', submitData, {
       headers: { 
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
@@ -83,7 +83,7 @@ const Products = () => {
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      axios.delete(`http://127.0.0.1:8000/api/admin/products/${productId}`, {
+      axios.delete(`http://127.0.0.1:8000/api/v1/admin/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(() => {
@@ -97,7 +97,7 @@ const Products = () => {
   };
 
   const handleStatusUpdate = (productId, status) => {
-    axios.put(`http://127.0.0.1:8000/api/admin/products/${productId}/status`, { status }, {
+    axios.put(`http://127.0.0.1:8000/api/v1/admin/products/${productId}/status`, { status }, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(() => {

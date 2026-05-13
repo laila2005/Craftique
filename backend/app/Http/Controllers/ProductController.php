@@ -12,7 +12,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json(\App\Models\Product::with('seller')->where('status', 'approved')->orderBy('created_at', 'desc')->get());
+        $products = \App\Models\Product::with('seller')->where('status', 'approved')->orderBy('created_at', 'desc')->get();
+        return \App\Http\Resources\ProductResource::collection($products);
     }
 
     /**
@@ -51,7 +52,10 @@ class ProductController extends Controller
             'is_archived' => false
         ]);
 
-        return response()->json(['message' => 'Product created successfully', 'product' => $product], 201);
+        return response()->json([
+            'message' => 'Product created successfully', 
+            'product' => new \App\Http\Resources\ProductResource($product)
+        ], 201);
     }
 
     /**
@@ -85,8 +89,8 @@ class ProductController extends Controller
         }
 
         return response()->json([
-            'product' => $product,
-            'similar_products' => $similarProducts,
+            'product' => new \App\Http\Resources\ProductResource($product),
+            'similar_products' => \App\Http\Resources\ProductResource::collection($similarProducts),
             'can_review' => $canReview,
             'is_favorited' => $isFavorited
         ]);

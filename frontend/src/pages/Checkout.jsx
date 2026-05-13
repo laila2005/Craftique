@@ -52,7 +52,7 @@ const Checkout = () => {
         promo_code: promoDiscount > 0 ? promoCode : null
       };
 
-      const response = await axios.post('http://127.0.0.1:8000/api/checkout', payload);
+      const response = await axios.post('http://127.0.0.1:8000/api/v1/checkout', payload);
       
       if (response.status === 201) {
         clearCart();
@@ -72,7 +72,7 @@ const Checkout = () => {
     setPromoSuccess('');
     
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/promo-codes/validate', {
+      const response = await axios.post('http://127.0.0.1:8000/api/v1/promo-codes/validate', {
         code: promoCode
       });
       setPromoDiscount(response.data.discount_percentage);

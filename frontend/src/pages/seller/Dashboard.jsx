@@ -28,7 +28,7 @@ const SellerDashboard = () => {
   }, []);
 
   const fetchProducts = () => {
-    axios.get('http://127.0.0.1:8000/api/seller/products', {
+    axios.get('http://127.0.0.1:8000/api/v1/seller/products', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -57,7 +57,7 @@ const SellerDashboard = () => {
     if (formData.image_url) submitData.append('image_url', formData.image_url);
     if (imageFile) submitData.append('image_file', imageFile);
 
-    axios.post('http://127.0.0.1:8000/api/seller/products', submitData, {
+    axios.post('http://127.0.0.1:8000/api/v1/seller/products', submitData, {
       headers: { 
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
@@ -81,7 +81,7 @@ const SellerDashboard = () => {
 
   const handleDeleteProduct = (productId) => {
     if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-      axios.delete(`http://127.0.0.1:8000/api/seller/products/${productId}`, {
+      axios.delete(`http://127.0.0.1:8000/api/v1/seller/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(() => {
@@ -100,7 +100,7 @@ const SellerDashboard = () => {
     setManageStock(product.stock_quantity);
     setIsManageModalOpen(true);
     
-    axios.get(`http://127.0.0.1:8000/api/seller/products/${product.id}`, {
+    axios.get(`http://127.0.0.1:8000/api/v1/seller/products/${product.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -117,7 +117,7 @@ const SellerDashboard = () => {
   const handleStockUpdate = (e) => {
     e.preventDefault();
     setManageLoading(true);
-    axios.put(`http://127.0.0.1:8000/api/seller/products/${selectedProduct.id}`, {
+    axios.put(`http://127.0.0.1:8000/api/v1/seller/products/${selectedProduct.id}`, {
       stock_quantity: manageStock
     }, {
       headers: { Authorization: `Bearer ${token}` }

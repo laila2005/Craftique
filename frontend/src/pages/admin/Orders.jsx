@@ -11,7 +11,7 @@ const Orders = () => {
 
   const fetchOrders = (page = 1) => {
     setLoading(true);
-    axios.get(`http://127.0.0.1:8000/api/admin/orders?page=${page}`, {
+    axios.get(`http://127.0.0.1:8000/api/v1/admin/orders?page=${page}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -36,7 +36,7 @@ const Orders = () => {
   }, [token]);
 
   const updateOrderStatus = (orderId, newStatus) => {
-    axios.put(`http://127.0.0.1:8000/api/admin/orders/${orderId}/status`, { status: newStatus }, {
+    axios.put(`http://127.0.0.1:8000/api/v1/admin/orders/${orderId}/status`, { status: newStatus }, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

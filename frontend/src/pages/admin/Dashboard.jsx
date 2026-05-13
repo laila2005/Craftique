@@ -8,7 +8,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/admin/stats')
+    axios.get('http://127.0.0.1:8000/api/v1/admin/stats')
       .then(response => {
         setStats(response.data);
         setLoading(false);

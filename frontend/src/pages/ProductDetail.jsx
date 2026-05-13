@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const fetchProductDetails = () => {
     setLoading(true);
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    axios.get(`http://127.0.0.1:8000/api/products/${id}`, { headers })
+    axios.get(`http://127.0.0.1:8000/api/v1/products/${id}`, { headers })
       .then(response => {
         setData(response.data);
         setIsFavorited(response.data.is_favorited);
@@ -39,7 +39,7 @@ const ProductDetail = () => {
 
   const toggleFavorite = () => {
     if (!isAuthenticated) return alert('Please login to save products.');
-    axios.post(`http://127.0.0.1:8000/api/products/${id}/favorite`, {}, {
+    axios.post(`http://127.0.0.1:8000/api/v1/products/${id}/favorite`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
       setIsFavorited(res.data.is_favorited);
@@ -49,7 +49,7 @@ const ProductDetail = () => {
   const submitReview = (e) => {
     e.preventDefault();
     setSubmittingReview(true);
-    axios.post(`http://127.0.0.1:8000/api/products/${id}/reviews`, {
+    axios.post(`http://127.0.0.1:8000/api/v1/products/${id}/reviews`, {
       rating: reviewRating,
       comment: reviewComment
     }, {

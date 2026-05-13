@@ -20,7 +20,7 @@ const Profile = () => {
   }, [location.state]);
 
   const removeFavorite = (productId) => {
-    axios.post(`http://127.0.0.1:8000/api/products/${productId}/favorite`, {}, {
+    axios.post(`http://127.0.0.1:8000/api/v1/products/${productId}/favorite`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -38,7 +38,7 @@ const Profile = () => {
       return;
     }
 
-    axios.get('http://127.0.0.1:8000/api/user/profile', {
+    axios.get('http://127.0.0.1:8000/api/v1/user/profile', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {

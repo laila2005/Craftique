@@ -27,7 +27,7 @@ class SellerAuthController extends Controller
             'description' => $request->description ?? '',
         ]);
 
-        $token = $seller->createToken('seller-auth-token')->plainTextToken;
+        $token = $seller->createToken('seller-auth-token', ['role:seller'])->plainTextToken;
 
         return response()->json([
             'seller' => $seller,
@@ -51,7 +51,7 @@ class SellerAuthController extends Controller
             ]);
         }
 
-        $token = $seller->createToken('seller-auth-token')->plainTextToken;
+        $token = $seller->createToken('seller-auth-token', ['role:seller'])->plainTextToken;
 
         return response()->json([
             'seller' => $seller,

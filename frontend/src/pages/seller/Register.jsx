@@ -27,7 +27,7 @@ const SellerRegister = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/seller/register', formData);
+      const response = await axios.post('http://127.0.0.1:8000/api/v1/seller/register', formData);
       login(response.data.user || response.data.seller, response.data.token, response.data.role);
       navigate('/seller/dashboard');
     } catch (err) {

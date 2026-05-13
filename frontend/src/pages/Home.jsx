@@ -13,7 +13,7 @@ const Home = () => {
   const searchQuery = searchParams.get('search') || '';
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/products')
+    axios.get('http://127.0.0.1:8000/api/v1/products')
       .then(response => {
         setProducts(response.data);
         setLoading(false);
